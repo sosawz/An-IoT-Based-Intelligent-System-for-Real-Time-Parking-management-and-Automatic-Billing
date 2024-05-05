@@ -2,8 +2,7 @@ const express  = require('express');
 const db = require("./util/database");
 const app = express();
 
-const adminContactRoutes = require('./routes/contacts');
-const adminAttractionRoutes = require('./routes/attractions');
+const adminPlateRoutes = require('./routes/plates');
 
 app.use(express.json());
 app.use((req, res, next) => {
@@ -12,6 +11,6 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
-app.use("/admin",adminContactRoutes,adminAttractionRoutes);
+app.use("/admin",adminplateRoutes);
 
 app.listen(8081);
