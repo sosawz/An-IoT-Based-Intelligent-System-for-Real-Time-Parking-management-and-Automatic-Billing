@@ -11,6 +11,6 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
-app.use("/admin",adminplateRoutes);
+app.use("/admin",adminPlateRoutes);
 
 app.listen(8081);
