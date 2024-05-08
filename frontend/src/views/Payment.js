@@ -6,6 +6,10 @@ const Payment = () => {
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [closestMatch, setClosestMatch] = useState("");
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [entryTime, setEntryTime] = useState("");
+  const [exitTime, setExitTime] = useState("");
+  const [serviceCharge, setServiceCharge] = useState(0);
 
   useEffect(() => {
     getData();
@@ -61,6 +65,30 @@ const Payment = () => {
     item.plate.toLowerCase().includes(closestMatch.toLowerCase())
   ) : [];
 
+  const calculateServiceCharge = (entryTime) => {
+    // Assume hourly rate is 20
+    const hourlyRate = 20;
+    const entryTimestamp = new Date(entryTime).getTime();
+    const currentTimestamp = new Date().getTime();
+    const timeDiff = currentTimestamp - entryTimestamp;
+    const hours = Math.ceil(timeDiff / (1000 * 60 * 60)); // Convert milliseconds to hours
+    const serviceCharge = hours * hourlyRate;
+    return serviceCharge;
+  }
+
+  const calculateExitTime = () => {
+    const exitTimestamp = new Date().toLocaleString();
+    setExitTime(exitTimestamp);
+  }
+
+  const handlePay = (entryTime) => {
+    const serviceCharge = calculateServiceCharge(entryTime);
+    calculateExitTime();
+    setEntryTime(entryTime);
+    setServiceCharge(serviceCharge);
+    setShowReceipt(true);
+  }
+
   return (
     <section>
       <div className="container">
@@ -99,11 +127,20 @@ const Payment = () => {
                 <td style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <Link to={`/edit`} className="btn btn-info mr-2" style={{ marginRight: '30px' }}>Edit</Link>
                   <button className="btn btn-danger" onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) handleDelete(item.id) }}>Delete</button>
+                  <button className="btn btn-success" onClick={() => handlePay(item.timestamp)}>Pay</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {showReceipt && (
+          <div>
+            <h3>Receipt</h3>
+            <p>Entry Time: {entryTime}</p>
+            <p>Exit Time: {exitTime}</p>
+            <p>Service Charge: {serviceCharge}฿</p>
+          </div>
+        )}
       </div>
     </section>
   );
