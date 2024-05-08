@@ -59,12 +59,28 @@ const Admin = () => {
                 <td>{item.plate}</td>
                 <td>
                   {/* แสดงรูปภาพ */}
-                  <img src={`data:image/jpeg;base64,${item.image}`} alt="License Plate" style={{ maxWidth: '100px' }} />
+                  <img src={`data:image/jpeg;base64,${item.image}`} alt="License Plate" style={{ maxWidth: '100px', maxHeight: '50px' }} />
                 </td>
                 <td>{item.timestamp}</td>
-                <td style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                  <Link to={`/edit`} className="btn btn-info mr-2" style={{ marginRight: '30px' }}>Edit</Link>
-                  <button className="btn btn-danger" onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) handleDelete(item.attraction_id) }}>Delete</button>
+                <td style={{ display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Link to={`/edit`}
+                      type="button"
+                      className="btn btn-link btn-rounded btn-sm fw-bold"
+                      data-mdb-ripple-color="dark"
+                      style={{ marginBottom: '5px' }}
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      type="button"
+                      className="btn btn-link btn-rounded btn-sm fw-bold"
+                      data-mdb-ripple-color="dark"
+                      onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) handleDelete(item.attraction_id) }}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
