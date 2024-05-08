@@ -1,5 +1,4 @@
 // import { exact } from "prop-types";
-import { element, exact } from "prop-types";
 import { lazy } from "react";
 import { Navigate } from "react-router-dom";
 

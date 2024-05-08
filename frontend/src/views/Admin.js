@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { format } from 'date-fns';
-import DateFnsUtils from '@date-io/date-fns'; // อย่าลืม import DateFnsUtils ด้วยนะครับ/ค่ะ
-import moment from 'moment';
 
 const Admin = () => {
   const [data, setData] = useState([]);

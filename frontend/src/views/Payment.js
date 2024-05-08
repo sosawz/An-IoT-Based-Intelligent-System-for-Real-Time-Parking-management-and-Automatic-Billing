@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { format } from 'date-fns';
 
@@ -24,18 +23,6 @@ const Payment = () => {
             .catch((error) => {
                 console.log(error);
             })
-    }
-
-    const handleDelete = (id) => {
-        axios.get(`http://localhost:8081/admin/delete-plates?id=${id}`)
-            .then(res => {
-                if (res.data.result) {
-                    getData();
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            });
     }
 
     const handleSearch = (query) => {
@@ -126,16 +113,15 @@ const Payment = () => {
                                 </td>
                                 <td>{format(new Date(item.timestamp), 'M/d/yyyy, hh:mm:ss a')}</td>
                                 <td style={{ textAlign: 'center' }}>
-  <button
-    type="button"
-    className="btn btn-link btn-rounded btn-sm fw-bold"
-    data-mdb-ripple-color="dark"
-    onClick={() => handlePay(item.timestamp)}
-  >
-    Pay
-  </button>
-</td>
-
+                                    <button
+                                        type="button"
+                                        className="btn btn-link btn-rounded btn-sm fw-bold"
+                                        data-mdb-ripple-color="dark"
+                                        onClick={() => handlePay(item.timestamp)}
+                                    >
+                                        Pay
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
