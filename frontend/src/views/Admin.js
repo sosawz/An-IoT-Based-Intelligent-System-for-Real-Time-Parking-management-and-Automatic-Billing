@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { format } from 'date-fns';
+import DateFnsUtils from '@date-io/date-fns'; // อย่าลืม import DateFnsUtils ด้วยนะครับ/ค่ะ
+import moment from 'moment';
 
 const Admin = () => {
   const [data, setData] = useState([]);
@@ -33,10 +36,9 @@ const Admin = () => {
       });
   }
 
-
   return (
     <section>
-      <div classname="container">
+      <div className="container">
         <div className="row justify-content-center pb-4">
           <div className="col-md-9 heading-section text-center fadeInUp ftco-animated">
             <h2 className="mb-4">Plate Data</h2>
@@ -61,7 +63,12 @@ const Admin = () => {
                   {/* แสดงรูปภาพ */}
                   <img src={`data:image/jpeg;base64,${item.image}`} alt="License Plate" style={{ maxWidth: '100px', maxHeight: '50px' }} />
                 </td>
-                <td>{item.timestamp}</td>
+                <td>
+                  {/* แปลงรูปแบบของเวลา */}
+                  {format(new Date(item.timestamp), 'M/d/yyyy, hh:mm:ss a')}
+                  {/* หรือถ้าใช้ moment.js */}
+                  {/* {moment(item.timestamp).format('M/D/YYYY, hh:mm:ss A')} */}
+                </td>
                 <td style={{ display: 'flex', justifyContent: 'center' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Link to={`/edit`}
@@ -90,7 +97,5 @@ const Admin = () => {
     </section>
   );
 }
-
-
 
 export default Admin;
