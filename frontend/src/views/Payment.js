@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { format } from 'date-fns';
 
 const Payment = () => {
   const [data, setData] = useState([]);
@@ -123,7 +124,7 @@ const Payment = () => {
                 <td>
                   <img src={`data:image/jpeg;base64,${item.image}`} alt="License Plate" style={{ maxWidth: '100px' }} />
                 </td>
-                <td>{item.timestamp}</td>
+                <td>{format(new Date(item.timestamp), 'M/d/yyyy, hh:mm:ss a')}</td>
                 <td style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <Link to={`/edit`} className="btn btn-info mr-2" style={{ marginRight: '30px' }}>Edit</Link>
                   <button className="btn btn-danger" onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) handleDelete(item.id) }}>Delete</button>
@@ -136,7 +137,7 @@ const Payment = () => {
         {showReceipt && (
           <div>
             <h3>Receipt</h3>
-            <p>Entry Time: {entryTime}</p>
+            <p>Entry Time: {format(new Date(entryTime), 'M/d/yyyy, hh:mm:ss a')}</p>
             <p>Exit Time: {exitTime}</p>
             <p>Service Charge: {serviceCharge}฿</p>
           </div>
