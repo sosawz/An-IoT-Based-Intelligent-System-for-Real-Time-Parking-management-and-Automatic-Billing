@@ -7,7 +7,6 @@ const ParkingLot = () => {
   const [parkingSpaceStatus, setParkingSpaceStatus] = useState({});
 
   useEffect(() => {
-    // Fetch parking space status from your API endpoint
     const fetchParkingSpaceStatus = async () => {
       try {
         const response = await fetch('https://blynk.cloud/external/api/getAll?token=IsJnxkBYp2SPY5xwQvZaGfKxBfgIm6xL');
@@ -19,7 +18,17 @@ const ParkingLot = () => {
     };
 
     fetchParkingSpaceStatus();
-  }, []); // The empty dependency array ensures the effect runs only once on component mount
+  }, []);
+
+  const countVacantSpaces = () => {
+    let vacantSpaces = 0;
+    Object.values(parkingSpaceStatus).forEach(status => {
+      if (status === 'Vacant') {
+        vacantSpaces++;
+      }
+    });
+    return vacantSpaces;
+  };
 
   const renderParkingSlots = () => {
     return Object.keys(parkingSpaceStatus).map((spaceKey) => (
@@ -50,6 +59,7 @@ const ParkingLot = () => {
   return (
     <Container className="mt-2">
       <h1 className="text-center mb-4" style={{ fontSize: '30px', fontWeight: 'bold' }}>Parking Space</h1>
+      <h2 className="text-center mb-4" style={{ fontSize: '24px' }}>Vacant Spaces : {countVacantSpaces()}</h2>
       <Row xs={1} md={3} lg={5} className="g-4">
         {renderParkingSlots()}
       </Row>
