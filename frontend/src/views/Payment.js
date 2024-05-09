@@ -92,6 +92,7 @@ const Payment = () => {
     }
 
     const handleDownload = () => {
+        alert("Downloading receipt...");
         // Logic for downloading the receipt
     }
 
@@ -191,17 +192,17 @@ const Payment = () => {
                                 </div>
                             </div>
                             <div className="text-center mt-4">
-                                <button onClick={handleDownload} className="btn btn-primary me-3">Download</button>
+                                <a href="#" onClick={handleDownload} className="btn btn-primary me-3">Download</a>
                                 <button onClick={handleShare} className="btn btn-success">Share</button>
                             </div>
                         </div>
                     </div>
                 )}
-    
+
             </div>
         </section>
     );
-    
+
 }
 
 export default Payment;
