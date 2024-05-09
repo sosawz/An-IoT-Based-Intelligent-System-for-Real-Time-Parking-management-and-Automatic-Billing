@@ -31,6 +31,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
     "react-router-dom": "^6.22.1",
+    "react-to-print": "^2.15.1",
     "reactstrap": "9.2.0",
     "sass": "1.63.2",
     "web-vitals": "3.3.2"
