@@ -10,6 +10,8 @@ const Payment = () => {
     const [entryTime, setEntryTime] = useState("");
     const [exitTime, setExitTime] = useState("");
     const [serviceCharge, setServiceCharge] = useState(0);
+    const [plateNumber, setPlateNumber] = useState("");
+    const [customerName, setCustomerName] = useState("");
 
     useEffect(() => {
         getData();
@@ -29,14 +31,26 @@ const Payment = () => {
         setSearchQuery(query);
         let bestMatch = "";
         let bestMatchLength = 0;
+        let foundMatch = false;
         data.forEach(item => {
             const similarity = calculateSimilarity(query.toLowerCase(), item.plate.toLowerCase());
             if (similarity > bestMatchLength) {
                 bestMatch = item.plate;
                 bestMatchLength = similarity;
+                foundMatch = true;
             }
         });
-        setClosestMatch(bestMatch);
+        if (!foundMatch) {
+            setClosestMatch("");
+            setPlateNumber("");
+        } else {
+            setClosestMatch(bestMatch);
+            const foundPlate = data.find(item => item.plate.toLowerCase() === bestMatch.toLowerCase());
+            if (foundPlate) {
+                setPlateNumber(foundPlate.plate);
+                setCustomerName(foundPlate.customerName || "");
+            }
+        }
     }
 
     const calculateSimilarity = (search, plate) => {
@@ -77,6 +91,14 @@ const Payment = () => {
         setShowReceipt(true);
     }
 
+    const handleDownload = () => {
+        // Logic for downloading the receipt
+    }
+
+    const handleShare = () => {
+        // Logic for sharing the receipt
+    }
+
     return (
         <section>
             <div className="container">
@@ -85,58 +107,101 @@ const Payment = () => {
                         <h2 className="mb-4">Search Plate For Payment</h2>
                     </div>
                 </div>
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by plate number..."
-                />
-                <button onClick={() => handleSearch(searchQuery)}>Search</button>
-                {closestMatch && <p>Closest match: {closestMatch}</p>}
-                <table className="table" style={{ border: '1px solid #ccc' }}>
-                    <thead>
-                        <tr className='thai' style={{ background: '#F15D30', fontSize: '18px' }}>
-                            <th scope="col" sstyle={{ textAlign: 'center' }}>ID</th>
-                            <th scope="col">Plate Number</th>
-                            <th scope="col">Picture</th>
-                            <th scope="col">Time</th>
-                            <th scope="col" style={{ textAlign: 'center' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredData.map(item => (
-                            <tr key={item.id}>
-                                <th>{item.id}</th>
-                                <td>{item.plate}</td>
-                                <td>
-                                    <img src={`data:image/jpeg;base64,${item.image}`} alt="License Plate" style={{ maxWidth: '100px' }} />
-                                </td>
-                                <td>{format(new Date(item.timestamp), 'M/d/yyyy, hh:mm:ss a')}</td>
-                                <td style={{ textAlign: 'center' }}>
-                                    <button
-                                        type="button"
-                                        className="btn btn-link btn-rounded btn-sm fw-bold"
-                                        data-mdb-ripple-color="dark"
-                                        onClick={() => handlePay(item.timestamp)}
-                                    >
-                                        Pay
-                                    </button>
-                                </td>
+                <div className="d-flex justify-content-center align-items-center mb-4">
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search by plate number..."
+                        className="form-control me-2"
+                        style={{ width: '300px' }}
+                    />
+                    <button onClick={() => handleSearch(searchQuery)} className="btn btn-primary">
+                        Search
+                    </button>
+                </div>
+                {closestMatch && <p className="text-center mb-4">Closest match: {closestMatch}</p>}
+                <div className="table-responsive">
+                    <table className="table" style={{ border: '1px solid #ccc' }}>
+                        <thead>
+                            <tr className='thai' style={{ background: '#F15D30', fontSize: '18px' }}>
+                                <th scope="col" sstyle={{ textAlign: 'center' }}>ID</th>
+                                <th scope="col">Plate Number</th>
+                                <th scope="col">Picture</th>
+                                <th scope="col">Time</th>
+                                <th scope="col" style={{ textAlign: 'center' }}>Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-                {showReceipt && (
-                    <div>
-                        <h3>Receipt</h3>
-                        <p>Entry Time: {format(new Date(entryTime), 'M/d/yyyy, hh:mm:ss a')}</p>
-                        <p>Exit Time: {exitTime}</p>
-                        <p>Service Charge: {serviceCharge}฿</p>
+                        </thead>
+                        <tbody>
+                            {filteredData.map(item => (
+                                <tr key={item.id}>
+                                    <th>{item.id}</th>
+                                    <td>{item.plate}</td>
+                                    <td>
+                                        <img src={`data:image/jpeg;base64,${item.image}`} alt="License Plate" style={{ maxWidth: '100px' }} />
+                                    </td>
+                                    <td>{format(new Date(item.timestamp), 'M/d/yyyy, hh:mm:ss a')}</td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <button
+                                            type="button"
+                                            className="btn btn-link btn-rounded btn-sm fw-bold"
+                                            data-mdb-ripple-color="dark"
+                                            onClick={() => handlePay(item.timestamp)}
+                                        >
+                                            Pay
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                {filteredData.length === 0 && (
+                    <div className="text-center mt-4">
+                        <p>No matching plates found.</p>
                     </div>
                 )}
+                {showReceipt && (
+                    <div className="card">
+                        <div className="card-body mx-4">
+                            <div className="container">
+                                <p className="my-5 text-center" style={{ fontSize: 30 }}>Parking Bill</p>
+                                <div className="row">
+                                    <ul className="list-unstyled">
+                                        <li className="text-black">Parking Payment</li>
+                                        <li className="text-muted mt-1"><span className="text-black">Entry Time:</span> {format(new Date(entryTime), 'M/d/yyyy, hh:mm:ss a')}</li>
+                                        <li className="text-muted mt-1"><span className="text-black">Exit Time:</span> {exitTime}</li>
+                                        {plateNumber && <li className="text-muted mt-1"><span className="text-black">Plate Number:</span> {plateNumber}</li>}
+                                        {customerName && <li className="text-muted mt-1"><span className="text-black">Customer Name:</span> {customerName}</li>}
+                                    </ul>
+                                    <hr />
+                                    <div className="col-xl-10">
+                                        <p>Parking Fee</p>
+                                    </div>
+                                    <div className="col-xl-2">
+                                        <p className="float-end">{serviceCharge}฿</p>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div className="row text-black">
+                                    <div className="col-xl-12">
+                                        <p className="float-end fw-bold">Total: {serviceCharge}฿</p>
+                                    </div>
+                                    <hr style={{ border: '2px solid black' }} />
+                                </div>
+                            </div>
+                            <div className="text-center mt-4">
+                                <button onClick={handleDownload} className="btn btn-primary me-3">Download</button>
+                                <button onClick={handleShare} className="btn btn-success">Share</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+    
             </div>
         </section>
     );
+    
 }
 
 export default Payment;
