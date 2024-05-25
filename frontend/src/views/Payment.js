@@ -200,6 +200,9 @@ const Payment = () => {
                   <ul className="list-unstyled">
                     <li className="text-black">Parking Payment</li>
                     <li className="text-muted mt-1">
+                      <span className="text-black">Fee is 20฿ per hour</span>
+                    </li>
+                    <li className="text-muted mt-1">
                       <span className="text-black">Entry Time:</span>{" "}
                       {format(new Date(entryTime), "M/d/yyyy, hh:mm:ss a")}
                     </li>
