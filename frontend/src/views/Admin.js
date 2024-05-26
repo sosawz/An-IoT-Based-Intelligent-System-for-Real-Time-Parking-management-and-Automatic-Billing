@@ -70,7 +70,7 @@ const Admin = () => {
                   </td>
                   <td style={{ display: 'flex', justifyContent: 'center' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <Link to={`/edit`}
+                      <Link to={`/edit/${item.id}`}
                         type="button"
                         className="btn btn-link btn-rounded btn-sm fw-bold"
                         data-mdb-ripple-color="dark"
@@ -82,7 +82,7 @@ const Admin = () => {
                         type="button"
                         className="btn btn-link btn-rounded btn-sm fw-bold"
                         data-mdb-ripple-color="dark"
-                        onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) handleDelete(item.attraction_id) }}
+                        onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) handleDelete(item.id) }}
                       >
                         Delete
                       </button>
