@@ -50,7 +50,7 @@ const Admin = () => {
                 <th scope="col">Plate Number</th>
                 <th scope="col">Picture</th>
                 <th scope="col">Time</th>
-                <th scope="col" style={{ textAlign: 'center' }}>Actions</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -68,19 +68,19 @@ const Admin = () => {
                     {/* หรือถ้าใช้ moment.js */}
                     {/* {moment(item.timestamp).format('M/D/YYYY, hh:mm:ss A')} */}
                   </td>
-                  <td style={{ display: 'flex', justifyContent: 'center' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <Link to={`/edit/${item.id}`}
+                  <td>
+                    <div style={{ display: 'flex',  alignItems: 'center' }}>
+                      {/* <Link to={`/edit/${item.id}`}
                         type="button"
                         className="btn btn-link btn-rounded btn-sm fw-bold"
                         data-mdb-ripple-color="dark"
                         style={{ marginBottom: '5px' }}
                       >
                         Edit
-                      </Link>
+                      </Link> */}
                       <button
                         type="button"
-                        className="btn btn-link btn-rounded btn-sm fw-bold"
+                        className="btn btn-link btn-rounded btn-bg fw-bold"
                         data-mdb-ripple-color="dark"
                         onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) handleDelete(item.id) }}
                       >
