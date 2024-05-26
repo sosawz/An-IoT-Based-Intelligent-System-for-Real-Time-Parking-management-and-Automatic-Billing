@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { Redirect } from 'react-router';
 
-const Edit = () => {
-    const { id } = useParams();
-    const history = useHistory();
+const Edit = (props) => {
     const [plateData, setPlateData] = useState({
-        id: id,
+        id: props.match.params.id,
         plate: '',
         image: '',
         timestamp: '',
@@ -16,7 +14,7 @@ const Edit = () => {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:8081/admin/plates/${id}`)
+            .get(`http://localhost:8081/admin/edit-plates/${plateData.id}`)
             .then((res) => {
                 let data = res.data.data;
                 console.log(data);
@@ -30,7 +28,7 @@ const Edit = () => {
             .catch((error) => {
                 console.log(error);
             });
-    }, [id]);
+    }, [plateData.id]);
 
     const handleChange = (e) => {
         console.log(e.target.name, e.target.value);
@@ -44,7 +42,7 @@ const Edit = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post(`http://localhost:8081/admin/update-plates/${id}`, plateData)
+        axios.post('http://localhost:8081/admin/edit-plates', plateData)
             .then(res => {
                 console.log(res.data);
                 if (res.data.result) {
