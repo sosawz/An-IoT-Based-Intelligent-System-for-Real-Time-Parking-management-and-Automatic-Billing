@@ -16,13 +16,13 @@ module.exports = class LicensePlate {
     save() {
         if (this.id) {
             return db.execute(
-                'UPDATE plate_data SET plate=?, timestamp=?, image=? WHERE id = ?',
-                [this.plate, this.timestamp, this.image, this.id]
+                'UPDATE plate_data SET plate=?, image=?, timestamp=timestamp WHERE id = ?',
+                [this.plate, this.image, this.id]
             );
         } else {
             return db.execute(
-                'INSERT INTO plate_data (plate, timestamp, image) VALUES (?, ?, ?)',
-                [this.plate, this.timestamp, this.image]
+                'INSERT INTO plate_data (plate, image) VALUES (?, ?)',
+                [this.plate, this.image]
             );
         }
     }

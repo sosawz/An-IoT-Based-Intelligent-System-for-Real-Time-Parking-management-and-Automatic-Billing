@@ -11,7 +11,6 @@ const Starter = lazy(() => import("../views/Starter.js"));
 const Admin = lazy(() => import("../views/Admin.js"));
 const About = lazy(() => import("../views/About.js"));
 const Payment = lazy(() => import("../views/Payment.js"));
-const Edit = lazy(() => import("../views/edit.js"));
 
 /*****Routes******/
 
@@ -25,7 +24,6 @@ const ThemeRoutes = [
       { path: "/admin", exact: true, element: <Admin /> },
       { path: "/about", exact: true, element: <About /> },
       { path: "/payment", exact: true, element: <Payment /> },
-      { path: "/edit/:id", exact: true, element: <Edit /> },  // Update this line
     ],
   },
 ];
