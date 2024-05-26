@@ -39,30 +39,21 @@ const Edit = () => {
     };
 
     const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Check if any property in plateData is undefined
-    const isUndefinedPresent = Object.values(plateData).some(value => value === undefined);
-
-    if (isUndefinedPresent) {
-        console.log("Some fields are empty");
-        return;
-    }
-
-    axios.post('http://localhost:8081/admin/edit-plates', plateData)
-        .then(res => {
-            console.log(res.data);
-            if (res.data.result) {
-                setPlateData(prevPlateData => ({
-                    ...prevPlateData
-                }))
-                navigate('/admin');
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
-};
+        e.preventDefault();
+        axios.post('http://localhost:8081/admin/edit-plates', plateData)
+            .then(res => {
+                console.log(res.data);
+                if (res.data.result) {
+                    setPlateData(prevPlateData => ({
+                        ...prevPlateData
+                      }))
+                    navigate('/admin');
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    };
 
     return (
         <section>

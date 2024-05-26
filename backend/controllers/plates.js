@@ -16,9 +16,9 @@ exports.getAllLicensePlates = (req, res, next) => {
 exports.addLicensePlate = (req, res, next) => {
     const plate = req.body.plate;
     const timestamp = req.body.timestamp;
-    const picture = req.body.picture;
+    const image = req.body.image;
     
-    const licensePlate = new LicensePlate(null, plate, timestamp, picture);
+    const licensePlate = new LicensePlate(null, plate, timestamp, image);
     licensePlate.save().then(() => {
         res.status(200).json({
             "message": "success",
@@ -50,9 +50,9 @@ exports.editLicensePlate = (req, res, next) => {
     const id = req.body.id;
     const plate = req.body.plate;
     const timestamp = req.body.timestamp;
-    const picture = req.body.picture;
+    const image = req.body.image;
     
-    const licensePlate = new LicensePlate(id, plate, timestamp, picture);
+    const licensePlate = new LicensePlate(id, plate, timestamp, image);
     licensePlate.save().then(() => {
         res.status(200).json({
             "message": "success",
