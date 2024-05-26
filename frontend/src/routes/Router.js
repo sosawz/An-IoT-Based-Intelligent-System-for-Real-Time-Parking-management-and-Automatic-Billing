@@ -22,10 +22,10 @@ const ThemeRoutes = [
     children: [
       { path: "/", element: <Navigate to="/starter" /> },
       { path: "/starter", exact: true, element: <Starter /> },
-      { path: "/admin", exact: true, element: <Admin/> },
+      { path: "/admin", exact: true, element: <Admin /> },
       { path: "/about", exact: true, element: <About /> },
-      { path: "/payment", exact: true, element: <Payment/>},
-      { path: "/edit", exact: true, element: <Edit/>},
+      { path: "/payment", exact: true, element: <Payment /> },
+      { path: "/edit/:id", exact: true, element: <Edit /> },  // Update this line
     ],
   },
 ];
