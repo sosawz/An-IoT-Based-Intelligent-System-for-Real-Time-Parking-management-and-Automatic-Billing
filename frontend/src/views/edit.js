@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useHistory } from "react-router-dom";
 import axios from "axios";
+import { Redirect } from 'react-router';
 
 const Edit = () => {
     const { id } = useParams();
