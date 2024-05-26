@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Redirect } from 'react-router';
 
 const Edit = (props) => {
+    const navigate = useNavigate();
     const [plateData, setPlateData] = useState({
         id: props.match.params.id,
         plate: '',
@@ -44,12 +44,8 @@ const Edit = (props) => {
         e.preventDefault();
         axios.post('http://localhost:8081/admin/edit-plates', plateData)
             .then(res => {
-                console.log(res.data);
                 if (res.data.result) {
-                    setPlateData(prevPlateData => ({
-                        ...prevPlateData,
-                        redirect: '/admin'
-                    }));
+                    navigate('/admin');
                 }
             })
             .catch(error => {
@@ -57,9 +53,6 @@ const Edit = (props) => {
             });
     };
 
-    if (plateData.redirect) {
-        return <Redirect to={plateData.redirect} />
-    }
 
     return (
         <section>
