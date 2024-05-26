@@ -16,7 +16,7 @@ const Edit = (props) => {
         axios
             .get(`http://localhost:8081/admin/edit-plates/${plateData.id}`)
             .then((res) => {
-                let data = res.data.data;
+                let data = res.data.data[0];
                 console.log(data);
                 setPlateData(prevPlateData => ({
                     ...prevPlateData,
