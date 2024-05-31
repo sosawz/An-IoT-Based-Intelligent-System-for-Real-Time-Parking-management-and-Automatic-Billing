@@ -19,8 +19,8 @@ const navigation = [
     icon: "bi bi-clipboard-data",
   },
   {
-    title: "Login",
-    href: "/badges",
+    title: "Logout",
+    href: "/login",
     icon: "bi bi-door-open", // Updated icon for Login
   },
 ];

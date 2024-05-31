@@ -2,21 +2,8 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { Container } from "reactstrap";
-// import { useEffect, useState } from "react";
 
 const FullLayout = () => {
-
-  // const [data, setData] = useState(null);
-
-  // useEffect(() => {
-  //   fetch('https://blynk.cloud/external/api/getAll?token=IsJnxkBYp2SPY5xwQvZaGfKxBfgIm6xL')
-  //     .then(response => response.json())
-  //     .then(json => setData(json))
-  //     .catch(error => console.error(error));
-  // }, []);
-
-
-
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
