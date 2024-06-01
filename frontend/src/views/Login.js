@@ -1,6 +1,27 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import Validation from "./LoginValidation";
 
 const Login = () => {
+  const [values, setValues] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const handleInput = (event) => {
+    setValues((prev) => ({
+      ...prev,
+      [event.target.name]: [event.target.value],
+    }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setErrors(Validation(values));
+  };
+
   return (
     <section className="vh-100" style={{ backgroundColor: "#000066" }}>
       <div className="container py-5 h-100">
@@ -17,14 +38,14 @@ const Login = () => {
                   />
                 </div>
                 <div className="col-md-6 col-lg-7 d-flex align-items-center">
-                  <div className="card-body p-4 p-lg-5 text-black text-center">
-                    <form>
-                      <div className="mb-3 pb-3">
+                  <div className="card-body p-4 p-lg-5 text-black">
+                    <form action="" onSubmit={handleSubmit}>
+                      <div className="mb-3 pb-3 text-center">
                         <span className="h1 fw-bold mb-0">Parking Member</span>
                       </div>
 
                       <h5
-                        className="fw-normal mb-3 pb-3"
+                        className="fw-normal mb-3 pb-3 text-center"
                         style={{ letterSpacing: "1px" }}
                       >
                         Sign into your account
@@ -36,7 +57,12 @@ const Login = () => {
                           id="form2Example17"
                           className="form-control form-control-lg"
                           placeholder="Email address"
+                          onChange={handleInput}
+                          name="email"
                         />
+                        {errors.email && (
+                          <span className="text-danger"> {errors.email}</span>
+                        )}
                       </div>
 
                       <div data-mdb-input-init className="form-outline mb-4">
@@ -45,37 +71,41 @@ const Login = () => {
                           id="form2Example27"
                           className="form-control form-control-lg"
                           placeholder="Password"
+                          onChange={handleInput}
+                          name="password"
                         />
+                        {errors.password && (
+                          <span className="text-danger"> {errors.password}</span>
+                        )}
                       </div>
 
-                      <div className="pt-1 mb-4">
-                        <Link to={"/starter"}>
+                      <div className="pt-1 mb-4 text-center">
                         <button
                           data-mdb-button-init
                           data-mdb-ripple-init
                           className="btn btn-dark btn-lg btn-block"
-                          type="button"
+                          type="submit"
                         >
                           Login
                         </button>
-                        </Link>
                       </div>
-{/* 
-                      <a className="small text-muted" href="#!">
-                        Forgot password?
-                      </a> */}
-                      <p className="mb-5 pb-lg-2" style={{ color: "#393f81" }}>
+                      <p
+                        className="mb-5 pb-lg-2 text-center"
+                        style={{ color: "#393f81" }}
+                      >
                         Don't have an account?{" "}
                         <Link to={"/register"} style={{ color: "#393f81" }}>
-                            Register here
+                          Register here
                         </Link>
                       </p>
-                      <a href="#!" className="small text-muted">
-                        Terms of use.
-                      </a>
-                      <a href="#!" className="small text-muted">
-                        Privacy policy
-                      </a>
+                      <div className="text-center">
+                        <a href="#!" className="small text-muted">
+                          Terms of use.
+                        </a>
+                        <a href="#!" className="small text-muted">
+                          Privacy policy
+                        </a>
+                      </div>
                     </form>
                   </div>
                 </div>
