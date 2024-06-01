@@ -5,7 +5,9 @@ const userController = require('../controllers/users');
 // path
 router.get('/users', userController.getAllUsers);
 
-// router.post('/add-plates', plateController.addLicensePlate);
+router.post('/add-users', userController.addUser);
+
+router.post('/login', userController.loginUsers);
 
 // router.get('/edit-plates/:id', plateController.getEditLicensePlate);
 

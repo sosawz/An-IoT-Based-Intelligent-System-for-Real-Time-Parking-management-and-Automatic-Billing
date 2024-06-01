@@ -14,24 +14,24 @@ module.exports = class User {
         return db.execute("select * from users");
     }
 
-    // save() {
-    //     if (this.id) {
-    //         return db.execute(
-    //             'UPDATE plate_data SET plate=?, image=?, timestamp=timestamp WHERE id = ?',
-    //             [this.plate, this.image, this.id]
-    //         );
-    //     } else {
-    //         return db.execute(
-    //             'INSERT INTO plate_data (plate, image) VALUES (?, ?)',
-    //             [this.plate, this.image]
-    //         );
-    //     }
-    // }
+    save() {
+        if (this.UserId) {
+            return db.execute(
+                'UPDATE users SET FirstName=?, LastName=? WHERE UserId = ?',
+                [this.FirstName, this.LastName, this.UserId]
+            );
+        } else {
+            return db.execute(
+                'INSERT INTO users (FirstName, LastName, Email, Password) VALUES (?, ?, ?, ?)',
+                [this.FirstName, this.LastName, this.Email, this.Password]
+            );
+        }
+    }
 
-    static findById(UserId){
+    static login(Email, Password) {
         return db.execute(
-            'select * from users where UserId = ?',
-            [UserId]
+          'SELECT * FROM users WHERE Email = ? AND Password = ?',
+          [Email, Password]
         );
     }
 

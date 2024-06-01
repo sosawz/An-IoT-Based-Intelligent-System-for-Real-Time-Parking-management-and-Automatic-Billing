@@ -1,25 +1,44 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Validation from "./LoginValidation";
+import axios from 'axios';
 
 const Login = () => {
   const [values, setValues] = useState({
-    email: "",
-    password: "",
+    Email: "",
+    Password: "",
   });
 
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
   const handleInput = (event) => {
+    const { name, value } = event.target;
     setValues((prev) => ({
       ...prev,
-      [event.target.name]: [event.target.value],
+      [name]: value,
     }));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrors(Validation(values));
+    if(errors.Email === "" && errors.Password === "") {
+      axios.post('http://localhost:8081/admin_user/login', values)
+      .then(res => {
+        if (res.data.message === "success") {
+          // ผู้ใช้งานมีข้อมูลถูกต้อง
+          navigate('/starter');
+        } else {
+          // ผู้ใช้งานไม่มีข้อมูลในระบบ
+          alert(res.data.message);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("An error occurred. Please try again later.");
+      });
+    }
   };
 
   return (
@@ -58,10 +77,10 @@ const Login = () => {
                           className="form-control form-control-lg"
                           placeholder="Email address"
                           onChange={handleInput}
-                          name="email"
+                          name="Email"
                         />
-                        {errors.email && (
-                          <span className="text-danger"> {errors.email}</span>
+                        {errors.Email && (
+                          <span className="text-danger"> {errors.Email}</span>
                         )}
                       </div>
 
@@ -72,10 +91,10 @@ const Login = () => {
                           className="form-control form-control-lg"
                           placeholder="Password"
                           onChange={handleInput}
-                          name="password"
+                          name="Password"
                         />
-                        {errors.password && (
-                          <span className="text-danger"> {errors.password}</span>
+                        {errors.Password && (
+                          <span className="text-danger"> {errors.Password}</span>
                         )}
                       </div>
 

@@ -1,27 +1,39 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Validation from "./RegisterValidation";
+import axios from 'axios';
 
 const Register = () => {
   const [values, setValues] = useState({
-    name: "",
-    lastname: "",
-    email: "",
-    password: "",
+    FirstName: "",
+    LastName: "",
+    Email: "",
+    Password: "",
   });
 
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
   const handleInput = (event) => {
+    const { name, value } = event.target;
     setValues((prev) => ({
       ...prev,
-      [event.target.name]: [event.target.value],
+      [name]: value,
     }));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrors(Validation(values));
+    if(errors.FirstName === "" && errors.LastName === "" && errors.Email === "" && errors.Password === "") {
+      axios.post('http://localhost:8081/admin_user/add-users', values)
+      .then(res => {
+        navigate('/login');
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    }
   };
 
   return (
@@ -47,29 +59,27 @@ const Register = () => {
                       <div className="col-6">
                         <input
                           type="text"
-                          id="firstName"
                           className="form-control form-control-lg"
                           placeholder="First Name"
-                          name="name"
+                          name="FirstName"
                           onChange={handleInput}
                         />
-                        {errors.name && (
-                          <span className="text-danger"> {errors.name}</span>
+                        {errors.FirstName && (
+                          <span className="text-danger"> {errors.FirstName}</span>
                         )}
                       </div>
                       <div className="col-6">
                         <input
                           type="text"
-                          id="lastName"
                           className="form-control form-control-lg"
                           placeholder="Last Name"
-                          name="lastname"
+                          name="LastName"
                           onChange={handleInput}
                         />
-                        {errors.lastname && (
+                        {errors.LastName && (
                           <span className="text-danger">
                             {" "}
-                            {errors.lastname}
+                            {errors.LastName}
                           </span>
                         )}
                       </div>
@@ -78,28 +88,26 @@ const Register = () => {
                     <div className="form-outline mb-4">
                       <input
                         type="email"
-                        id="email"
                         className="form-control form-control-lg"
                         placeholder="Email address"
-                        name="email"
+                        name="Email"
                         onChange={handleInput}
                       />
-                      {errors.email && (
-                        <span className="text-danger"> {errors.email}</span>
+                      {errors.Email && (
+                        <span className="text-danger"> {errors.Email}</span>
                       )}
                     </div>
 
                     <div className="form-outline mb-4">
                       <input
                         type="password"
-                        id="password"
                         className="form-control form-control-lg"
                         placeholder="Password"
-                        name="password"
+                        name="Password"
                         onChange={handleInput}
                       />
-                      {errors.password && (
-                        <span className="text-danger"> {errors.password}</span>
+                      {errors.Password && (
+                        <span className="text-danger"> {errors.Password}</span>
                       )}
                     </div>
 
