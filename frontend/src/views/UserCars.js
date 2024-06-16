@@ -171,7 +171,7 @@ const UserCars = () => {
                       style={{ verticalAlign: "middle" }}
                     >
                       <button
-                        className="btn btn-info btn-sm m-1"
+                        className="btn btn-success btn-sm m-1"
                         onClick={() => handleShowEditModal(car)}
                       >
                         <span className="bi bi-pencil"></span> Edit
