@@ -1,0 +1,30 @@
+.table thead th {
+    background-color: #343a40;
+    color: #ffffff;
+    border-bottom: none; /* เอากรอบด้านล่างออก */
+  }
+  
+  .table-bordered tbody tr td,
+  .table-bordered tbody tr th {
+    border: 1px solid #dee2e6;
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+  }
+  
+  .btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  .btn-info:hover, .btn-danger:hover {
+    opacity: 0.8;
+  }
+
+  

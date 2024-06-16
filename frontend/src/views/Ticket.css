@@ -1,0 +1,123 @@
+/* Ticket CSS for displaying in the modal */
+.parking-ticket {
+  background-color: #fff;
+  padding: 20px;
+  width: 100%; /* Adjust width for modal display */
+  max-width: 450px; /* Max width to fit within A5 */
+  box-sizing: border-box; /* Ensure padding and border are included in the width */
+}
+
+.header {
+  text-align: center;
+}
+
+.company-name {
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.address {
+  font-size: 15px;
+}
+
+.parking-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.paid-parking {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.details {
+  margin-top: 20px;
+}
+
+.details div {
+  margin-bottom: 10px;
+}
+
+.paid {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.thank-you {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.barcode {
+  height: 50px;
+  background-color: #ccc;
+  margin-top: 20px;
+}
+
+.license-plate {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* Centering the ticket in the modal */
+.modal-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+  .parking-ticket {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .company-name {
+    font-size: 16px;
+  }
+
+  .address {
+    font-size: 12px;
+  }
+
+  .parking-icon {
+    margin-top: 10px;
+  }
+
+  .paid-parking {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+
+  .paid {
+    font-size: 16px;
+  }
+
+  .thank-you {
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  .barcode {
+    height: 40px;
+    margin-top: 10px;
+  }
+
+  .license-plate {
+    font-size: 16px;
+  }
+}

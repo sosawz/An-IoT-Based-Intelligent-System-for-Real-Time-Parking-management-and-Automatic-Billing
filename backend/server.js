@@ -80,7 +80,7 @@ app.post("/login", (req, res) => {
   });
 });
 
-// Middle ware for verifying token
+// Middleware for verifying token
 const authMiddleware = (req, res, next) => {
   const token = req.headers["x-access-token"];
   if (!token)
@@ -124,7 +124,7 @@ app.put("/cars/:id", authMiddleware, (req, res) => {
   const { licensePlates, brand, color } = req.body;
   const carId = req.params.id;
   const sql =
-    "UPDATE cars SER LicensePlate = ?, Brand = ?, Color = ? WHERE CarID= ?";
+    "UPDATE cars SET LicensePlate = ?, Brand = ?, Color = ? WHERE CarID= ?";
   db.query(sql, [licensePlates, brand, color, carId], (err, result) => {
     if (err) return res.status(500).send("Server error");
     res.status(200).send("Car updated");
@@ -140,6 +140,39 @@ app.delete('/cars/:id', authMiddleware, (req, res) => {
         res.status(200).send('Car deleted')
     })
 })
+
+// Get detection records
+app.get("/detectionrecords", authMiddleware, (req, res) => {
+  const userId = req.userId;
+  const sql = "SELECT * FROM detectionrecords WHERE LicensePlate IN (SELECT LicensePlate FROM cars WHERE UserID = ?)";
+  db.query(sql, [userId], (err, results) => {
+    if (err) return res.status(500).send("Server error");
+    res.status(200).send(results);
+  });
+});
+
+// Calculate charge
+const calculateCharge = (entryTime, exitTime) => {
+  const entry = new Date(entryTime);
+  const exit = new Date(exitTime);
+  const duration = (exit - entry) / (1000 * 60 * 60); // duration in hours
+  const rate = 5; // Example rate per hour
+  return duration * rate;
+};
+
+// Get payment details
+app.get("/payment/:recordId", authMiddleware, (req, res) => {
+  const recordId = req.params.recordId;
+  const sql = "SELECT * FROM detectionrecords WHERE RecordID = ?";
+  db.query(sql, [recordId], (err, results) => {
+    if (err) return res.status(500).send("Server error");
+    if (results.length === 0) return res.status(404).send("Record not found");
+
+    const record = results[0];
+    const charge = calculateCharge(record.DetectionTime, record.ExitTime);
+    res.status(200).send({ record, charge });
+  });
+});
 
 app.listen(8081, () => {
   console.log("Server running on port 8081");

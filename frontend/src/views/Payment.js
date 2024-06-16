@@ -1,260 +1,151 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { format } from "date-fns";
-import ReactToPrint from "react-to-print";
-import { useReactToPrint } from 'react-to-print';
+import { Modal, Button, Table } from "react-bootstrap";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import "./UserCars.css";
+import "./Ticket.css";
+import { FaParking } from "react-icons/fa";
 
 const Payment = () => {
-  const [data, setData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [closestMatch, setClosestMatch] = useState("");
-  const [showReceipt, setShowReceipt] = useState(false);
-  const [entryTime, setEntryTime] = useState("");
-  const [exitTime, setExitTime] = useState("");
-  const [serviceCharge, setServiceCharge] = useState(0);
-  const [plateNumber, setPlateNumber] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const componentRef = useRef();
+  const [records, setRecords] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState(null);
+  const [totalCharge, setTotalCharge] = useState(0);
 
   useEffect(() => {
-    getData();
+    fetchRecords();
   }, []);
 
-  const getData = () => {
-    axios
-      .get("http://localhost:8081/admin/plates")
-      .then((res) => {
-        setData(res.data.data);
-      })
-      .catch((error) => {
-        console.log(error);
+  const fetchRecords = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.get("http://localhost:8081/detectionrecords", {
+        headers: { "x-access-token": token },
       });
-  };
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    let bestMatch = "";
-    let bestMatchLength = 0;
-    let foundMatch = false;
-    data.forEach((item) => {
-      const similarity = calculateSimilarity(
-        query.toLowerCase(),
-        item.plate.toLowerCase()
-      );
-      if (similarity > bestMatchLength) {
-        bestMatch = item.plate;
-        bestMatchLength = similarity;
-        foundMatch = true;
-      }
-    });
-    if (!foundMatch) {
-      setClosestMatch("");
-      setPlateNumber("");
-    } else {
-      setClosestMatch(bestMatch);
-      const foundPlate = data.find(
-        (item) => item.plate.toLowerCase() === bestMatch.toLowerCase()
-      );
-      if (foundPlate) {
-        setPlateNumber(foundPlate.plate);
-        setCustomerName(foundPlate.customerName || "");
-      }
+      setRecords(res.data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const calculateSimilarity = (search, plate) => {
-    let matchCount = 0;
-    for (let i = 0; i < search.length; i++) {
-      if (plate.includes(search[i])) {
-        matchCount++;
-      }
+  const calculateCharge = (entryTime, exitTime) => {
+    const entry = new Date(entryTime);
+    const exit = new Date(exitTime);
+    const duration = (exit - entry) / (1000 * 60 * 60); // duration in hours
+    const rate = 20; // Example rate per hour
+    return duration * rate;
+  };
+
+  const handleShowModal = (record) => {
+    setCurrentRecord(record);
+    const charge = calculateCharge(record.DetectionTime, record.ExitTime);
+    setTotalCharge(charge);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setCurrentRecord(null);
+    setTotalCharge(0);
+  };
+
+  const handlePayment = async () => {
+    try {
+      const input = document.getElementById("ticket");
+      html2canvas(input, { scale: 2 }).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("portrait", "mm", "a5");
+        const imgWidth = 148;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+        pdf.save(`parking_ticket_${currentRecord.LicensePlate}.pdf`);
+      });
+
+      alert("Payment Successful!");
+      handleCloseModal();
+    } catch (err) {
+      console.error(err);
     }
-    return matchCount;
   };
-
-  const filteredData = closestMatch
-    ? data.filter((item) =>
-        item.plate.toLowerCase().includes(closestMatch.toLowerCase())
-      )
-    : [];
-
-  const calculateServiceCharge = (entryTime) => {
-    // Assume hourly rate is 20
-    const hourlyRate = 20;
-    const entryTimestamp = new Date(entryTime).getTime();
-    const currentTimestamp = new Date().getTime();
-    const timeDiff = currentTimestamp - entryTimestamp;
-    const hours = Math.ceil(timeDiff / (1000 * 60 * 60)); // Convert milliseconds to hours
-    const serviceCharge = hours * hourlyRate;
-    return serviceCharge;
-  };
-
-  const calculateExitTime = () => {
-    const exitTimestamp = new Date().toLocaleString();
-    setExitTime(exitTimestamp);
-  };
-
-  const handlePay = (entryTime) => {
-    const serviceCharge = calculateServiceCharge(entryTime);
-    calculateExitTime();
-    setEntryTime(entryTime);
-    setServiceCharge(serviceCharge);
-    setShowReceipt(true);
-  };
-
-  const handlePrint = useReactToPrint({
-    documentTitle: "Print This Document",
-    onBeforePrint: () => console.log("before printing..."),
-    onAfterPrint: () => console.log("after printing..."),
-    removeAfterPrint: true,
-  });
 
   return (
     <section>
       <div className="container">
-        <div className="row justify-content-center pb-4">
-          <div className="col-md-9 heading-section text-center fadeInUp ftco-animated">
-            <h2 className="mb-4">Search Plate For Payment</h2>
-          </div>
-        </div>
-        <div className="d-flex justify-content-center align-items-center mb-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by plate number..."
-            className="form-control me-2"
-            style={{ width: "300px" }}
-          />
-          <button
-            onClick={() => handleSearch(searchQuery)}
-            className="btn btn-primary"
-          >
-            Search
-          </button>
-        </div>
-        {closestMatch && (
-          <p className="text-center mb-4">Closest match: {closestMatch}</p>
-        )}
-        <div className="table-responsive">
-          <table className="table" style={{ border: "1px solid #ccc" }}>
-            <thead>
-              <tr
-                className="thai"
-                style={{ background: "#F15D30", fontSize: "18px" }}
-              >
-                <th scope="col" sstyle={{ textAlign: "center" }}>
-                  ID
-                </th>
-                <th scope="col">Plate Number</th>
-                <th scope="col">Picture</th>
-                <th scope="col">Time</th>
-                <th scope="col" style={{ textAlign: "center" }}>
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((item) => (
-                <tr key={item.id}>
-                  <th>{item.id}</th>
-                  <td>{item.plate}</td>
-                  <td>
-                    <img
-                      src={`data:image/jpeg;base64,${item.image}`}
-                      alt="License Plate"
-                      style={{ maxWidth: "100px" }}
-                    />
-                  </td>
-                  <td>
-                    {format(new Date(item.timestamp), "M/d/yyyy, hh:mm:ss a")}
-                  </td>
-                  <td style={{ textAlign: "center" }}>
-                    <button
-                      type="button"
-                      className="btn btn-link btn-rounded btn-sm fw-bold"
-                      data-mdb-ripple-color="dark"
-                      onClick={() => handlePay(item.timestamp)}
-                    >
-                      Pay
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {filteredData.length === 0 && (
-          <div className="text-center mt-4">
-            <p>No matching plates found.</p>
-          </div>
-        )}
-        {showReceipt && (
-          <div className="card">
-            <div className="card-body mx-4">
-              <div ref={componentRef} className="container">
-                <p className="my-5 text-center" style={{ fontSize: 30 }}>
-                  Parking Bill
-                </p>
-                <div className="row">
-                  <ul className="list-unstyled">
-                    <li className="text-black">Parking Payment</li>
-                    <li className="text-muted mt-1">
-                      <span className="text-black">Fee is 20฿ per hour</span>
-                    </li>
-                    <li className="text-muted mt-1">
-                      <span className="text-black">Entry Time:</span>{" "}
-                      {format(new Date(entryTime), "M/d/yyyy, hh:mm:ss a")}
-                    </li>
-                    <li className="text-muted mt-1">
-                      <span className="text-black">Exit Time:</span> {exitTime}
-                    </li>
-                    {plateNumber && (
-                      <li className="text-muted mt-1">
-                        <span className="text-black">Plate Number:</span>{" "}
-                        {plateNumber}
-                      </li>
-                    )}
-                    {customerName && (
-                      <li className="text-muted mt-1">
-                        <span className="text-black">Customer Name:</span>{" "}
-                        {customerName}
-                      </li>
-                    )}
-                  </ul>
-                  <hr />
-                  <div className="col-xl-10">
-                    <p>Parking Fee</p>
-                  </div>
-                  <div className="col-xl-2">
-                    <p className="float-end">{serviceCharge}฿</p>
-                  </div>
-                  <hr />
-                </div>
-                <div className="row text-black">
-                  <div className="col-xl-12">
-                    <p className="float-end fw-bold">Total: {serviceCharge}฿</p>
-                  </div>
-                  <hr style={{ border: "2px solid black" }} />
-                </div>
-              </div>
-              <div className="text-center mt-4">
-                <ReactToPrint
-                  trigger={() => (
-                    <button
-                      onClick={handlePrint}
-                      className="btn btn-primary me-3"
-                    >
-                      Print / Download
-                    </button>
-                  )}
-                  content={() => componentRef.current}
-                />
-              </div>
+        <div className="card p-4">
+          <div className="row justify-content-center pt-3">
+            <div className="col-md-9 heading-section text-center fadeInUp ftco-animated">
+              <h2 className="mb-2" style={{ fontSize: "35px", fontWeight: "bold" }}>
+                Payment Page
+              </h2>
             </div>
           </div>
-        )}
+          <div className="table-responsive p-4">
+            <Table striped>
+              <thead>
+                <tr className="thai" style={{ fontSize: "18px", backgroundColor: "#343a40", color: "#ffffff" }}>
+                  <th style={{ textAlign: "center", verticalAlign: "middle" }}>Record ID</th>
+                  <th style={{ verticalAlign: "middle" }}>License Plate</th>
+                  <th style={{ verticalAlign: "middle" }}>Entry Time</th>
+                  <th style={{ verticalAlign: "middle" }}>Exit Time</th>
+                  <th style={{ textAlign: "center", verticalAlign: "middle" }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {records.map((record) => (
+                  <tr key={record.RecordID}>
+                    <td style={{ textAlign: "center", verticalAlign: "middle" }}>{record.RecordID}</td>
+                    <td style={{ verticalAlign: "middle" }}>{record.LicensePlate}</td>
+                    <td style={{ verticalAlign: "middle" }}>{new Date(record.DetectionTime).toLocaleString()}</td>
+                    <td style={{ verticalAlign: "middle" }}>{new Date(record.ExitTime).toLocaleString()}</td>
+                    <td className="text-center" style={{ verticalAlign: "middle" }}>
+                      <button className="btn btn-success btn-sm m-1" onClick={() => handleShowModal(record)}>
+                        <span className="bi bi-credit-card"></span> Pay
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
       </div>
+
+      {/* Payment Modal */}
+      {currentRecord && (
+        <Modal show={showModal} onHide={handleCloseModal}>
+          <Modal.Body>
+            <div id="ticket" className="parking-ticket mt-3 mb-2">
+              <div className="header">
+                <div className="company-name">Smart Parking</div>
+                <div className="address">Walailak University</div>
+              </div>
+              <div className="parking-icon">
+                <FaParking size={80} style={{ color: "#B0C4DE" }} />
+              </div>
+              <div className="paid-parking">------------------------------------</div>
+              <div className="paid-parking">PAID PARKING</div>
+              <div className="details">
+              <div className="license-plate">License Plate: {currentRecord.LicensePlate}</div>
+                <div className="date">DATE: {new Date(currentRecord.DetectionTime).toLocaleDateString()}</div>
+                <div className="from">FROM: {new Date(currentRecord.DetectionTime).toLocaleTimeString()}</div>
+                <div className="to">TO: {new Date(currentRecord.ExitTime).toLocaleTimeString()}</div>
+                <div className="paid">Paid: {totalCharge.toFixed(2)}฿</div>
+              </div>
+              <div className="thank-you">THANK YOU AND LUCKY ROAD!</div>
+              <div className="barcode"></div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Close
+            </Button>
+            <Button variant="success" onClick={handlePayment}>
+              Pay Now
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </section>
   );
 };
