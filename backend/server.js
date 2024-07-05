@@ -11,9 +11,9 @@ app.use(bodyParser.json());
 
 const db = mysql.createConnection({
   host: "localhost",
-  user: "root",
-  password: "root",
-  database: "SmartParking",
+  user: "",
+  password: "",
+  database: "",
 });
 
 db.connect((err) => {
