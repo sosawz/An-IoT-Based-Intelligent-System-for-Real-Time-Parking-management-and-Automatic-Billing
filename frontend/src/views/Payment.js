@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Modal, Button, Table } from "react-bootstrap";
+import { Modal, Button, Table, Badge } from "react-bootstrap";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import "./UserCars.css";
@@ -62,7 +62,18 @@ const Payment = () => {
         pdf.save(`parking_ticket_${currentRecord.LicensePlate}.pdf`);
       });
 
+      // Update payment status in the backend
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:8081/detectionrecords/${currentRecord.RecordID}`,
+        { status: "Paid" },
+        {
+          headers: { "x-access-token": token },
+        }
+      );
+
       alert("Payment Successful!");
+      fetchRecords(); // Refresh records to update status
       handleCloseModal();
     } catch (err) {
       console.error(err);
@@ -88,6 +99,7 @@ const Payment = () => {
                   <th style={{ verticalAlign: "middle" }}>License Plate</th>
                   <th style={{ verticalAlign: "middle" }}>Entry Time</th>
                   <th style={{ verticalAlign: "middle" }}>Exit Time</th>
+                  <th style={{ textAlign: "center", verticalAlign: "middle" }}>Status</th>
                   <th style={{ textAlign: "center", verticalAlign: "middle" }}>Actions</th>
                 </tr>
               </thead>
@@ -99,9 +111,20 @@ const Payment = () => {
                     <td style={{ verticalAlign: "middle" }}>{new Date(record.DetectionTime).toLocaleString()}</td>
                     <td style={{ verticalAlign: "middle" }}>{new Date(record.ExitTime).toLocaleString()}</td>
                     <td className="text-center" style={{ verticalAlign: "middle" }}>
-                      <button className="btn btn-success btn-sm m-1" onClick={() => handleShowModal(record)}>
-                        <span className="bi bi-credit-card"></span> Pay
-                      </button>
+                      {record.status === "Paid" ? (
+                        <Badge bg="success">Paid</Badge>
+                      ) : (
+                        <Badge bg="danger">Unpaid</Badge>
+                      )}
+                    </td>
+                    <td className="text-center" style={{ verticalAlign: "middle" }}>
+                      {record.status !== "Paid" ? (
+                        <button className="btn btn-success btn-sm m-1" onClick={() => handleShowModal(record)}>
+                          <span className="bi bi-credit-card"></span> Pay
+                        </button>
+                      ) : (
+                        <span className="badge bg-success">Paid</span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -126,7 +149,7 @@ const Payment = () => {
               <div className="paid-parking">------------------------------------</div>
               <div className="paid-parking">PAID PARKING</div>
               <div className="details">
-              <div className="license-plate">License Plate: {currentRecord.LicensePlate}</div>
+                <div className="license-plate">License Plate: {currentRecord.LicensePlate}</div>
                 <div className="date">DATE: {new Date(currentRecord.DetectionTime).toLocaleDateString()}</div>
                 <div className="from">FROM: {new Date(currentRecord.DetectionTime).toLocaleTimeString()}</div>
                 <div className="to">TO: {new Date(currentRecord.ExitTime).toLocaleTimeString()}</div>

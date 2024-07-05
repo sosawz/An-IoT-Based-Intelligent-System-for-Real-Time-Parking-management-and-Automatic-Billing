@@ -174,6 +174,17 @@ app.get("/payment/:recordId", authMiddleware, (req, res) => {
   });
 });
 
+// Update payment status
+app.put("/detectionrecords/:id", authMiddleware, (req, res) => {
+  const recordId = req.params.id;
+  const { status } = req.body;
+  const sql = "UPDATE detectionrecords SET status = ? WHERE RecordID = ?";
+  db.query(sql, [status, recordId], (err, result) => {
+    if (err) return res.status(500).send("Server error");
+    res.status(200).send("Payment status updated");
+  });
+});
+
 app.listen(8081, () => {
   console.log("Server running on port 8081");
 });
