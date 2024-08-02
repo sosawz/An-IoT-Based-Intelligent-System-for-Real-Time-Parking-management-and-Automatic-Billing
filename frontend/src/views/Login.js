@@ -17,7 +17,9 @@ const Login = () => {
       localStorage.setItem("token", res.data.token);
       navigate("/starter");
     } catch (err) {
-      console.error(err);
+      console.error('Error:', err.response.data); 
+      // Assuming err.response.data is an object, convert it to a string
+      setLoginStatus(err.response.data.message || 'Wrong Email or Password!');
     }
   };
 
@@ -77,10 +79,10 @@ const Login = () => {
                           className={`text-${
                             loginStatus === "Wrong Email or Password!"
                               ? "danger"
-                              : "success"
+                              : "danger"
                           }`}
                         >
-                          {loginStatus}
+                          {typeof loginStatus === 'string' ? loginStatus : ''}
                         </span>
                       </div>
 

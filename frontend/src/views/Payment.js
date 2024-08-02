@@ -23,6 +23,7 @@ const Payment = () => {
       const res = await axios.get("http://localhost:8081/detectionrecords", {
         headers: { "x-access-token": token },
       });
+      console.log(res.data); // Log data to check Base64 string
       setRecords(res.data);
     } catch (err) {
       console.error(err);
@@ -31,7 +32,7 @@ const Payment = () => {
 
   const calculateCharge = (entryTime, exitTime) => {
     const entry = new Date(entryTime);
-    const exit = new Date(exitTime);
+    const exit = exitTime ? new Date(exitTime) : new Date();
     const duration = (exit - entry) / (1000 * 60 * 60); // duration in hours
     const rate = 20; // Example rate per hour
     return duration * rate;
@@ -97,6 +98,7 @@ const Payment = () => {
                 <tr className="thai" style={{ fontSize: "18px", backgroundColor: "#343a40", color: "#ffffff" }}>
                   <th style={{ textAlign: "center", verticalAlign: "middle" }}>Record ID</th>
                   <th style={{ verticalAlign: "middle" }}>License Plate</th>
+                  <th style={{ verticalAlign: "middle" }}>License Plate Image</th>
                   <th style={{ verticalAlign: "middle" }}>Entry Time</th>
                   <th style={{ verticalAlign: "middle" }}>Exit Time</th>
                   <th style={{ textAlign: "center", verticalAlign: "middle" }}>Status</th>
@@ -108,8 +110,21 @@ const Payment = () => {
                   <tr key={record.RecordID}>
                     <td style={{ textAlign: "center", verticalAlign: "middle" }}>{record.RecordID}</td>
                     <td style={{ verticalAlign: "middle" }}>{record.LicensePlate}</td>
+                    <td style={{ verticalAlign: "middle" }}>
+                      {record.PlateImage ? (
+                        <img
+                          src={`data:image/jpeg;base64,${record.PlateImage}`}
+                          alt={`License plate of ${record.LicensePlate}`}
+                          style={{ width: "100px", height: "auto" }}
+                        />
+                      ) : (
+                        <span>No Image</span>
+                      )}
+                    </td>
                     <td style={{ verticalAlign: "middle" }}>{new Date(record.DetectionTime).toLocaleString()}</td>
-                    <td style={{ verticalAlign: "middle" }}>{new Date(record.ExitTime).toLocaleString()}</td>
+                    <td style={{ verticalAlign: "middle" }}>
+                      {record.ExitTime ? new Date(record.ExitTime).toLocaleString() : "Not exited"}
+                    </td>
                     <td className="text-center" style={{ verticalAlign: "middle" }}>
                       {record.status === "Paid" ? (
                         <Badge bg="success">Paid</Badge>
@@ -152,7 +167,7 @@ const Payment = () => {
                 <div className="license-plate">License Plate: {currentRecord.LicensePlate}</div>
                 <div className="date">DATE: {new Date(currentRecord.DetectionTime).toLocaleDateString()}</div>
                 <div className="from">FROM: {new Date(currentRecord.DetectionTime).toLocaleTimeString()}</div>
-                <div className="to">TO: {new Date(currentRecord.ExitTime).toLocaleTimeString()}</div>
+                <div className="to">TO: {currentRecord.ExitTime ? new Date(currentRecord.ExitTime).toLocaleTimeString() : "Not exited"}</div>
                 <div className="paid">Paid: {totalCharge.toFixed(2)}฿</div>
               </div>
               <div className="thank-you">THANK YOU AND LUCKY ROAD!</div>
