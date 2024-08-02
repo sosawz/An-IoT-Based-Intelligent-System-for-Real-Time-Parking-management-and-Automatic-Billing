@@ -10,7 +10,7 @@ const ParkingLot = () => {
     const fetchParkingSpaceStatus = async () => {
       try {
         const response = await fetch(
-          "https://blynk.cloud/external/api/getAll?token=IsJnxkBYp2SPY5xwQvZaGfKxBfgIm6xL"
+          "your api"
         );
         const data = await response.json();
         setParkingSpaceStatus(data);
